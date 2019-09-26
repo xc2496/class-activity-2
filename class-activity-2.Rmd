@@ -1,6 +1,6 @@
 ---
 title: "intro to viz"
-author: "Charles Lang"
+author: "Xiaowen(Susan) Chen"
 date: "September 26, 2019"
 output: html_document
 ---
@@ -17,7 +17,7 @@ D2 <- filter(D1, schoolyear == 20112012)
 ```{r}
 #Generate a histogramof the percentage of free/reduced lunch students (frl_percent) at each school
 
-hist()
+hist(D2$frl_percent)
 
 #Change the number of breaks to 100, do you get the same impression?
 
@@ -80,6 +80,12 @@ pairs(D5)
 #pmax sets a maximum value, pmin sets a minimum value
 #round rounds numbers to whole number values
 #sample draws a random samples from the groups vector according to a uniform distribution
+set.seed(123)
+sample<-rnorm(100,75,20) 
+pmax<-max(sample)
+pmin<-min(sample)
+
+
 
 
 ```
