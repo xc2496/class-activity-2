@@ -82,8 +82,14 @@ pairs(D5)
 #sample draws a random samples from the groups vector according to a uniform distribution
 set.seed(123)
 sample<-rnorm(100,75,20) 
+sample
 pmax<-max(sample)
+pmax
 pmin<-min(sample)
+pmin
+round(sample,digits=0)
+round(pmax,digits=0)
+round(pmin,digits=0)
 
 
 
