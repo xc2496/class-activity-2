@@ -91,6 +91,10 @@ round(sample,digits=0)
 round(pmax,digits=0)
 round(pmin,digits=0)
 
+uniform_distribution<-runif(sample, min = 0, max = 1)
+uniform_distribution
+hist(uniform_distribution)
+
 
 
 
