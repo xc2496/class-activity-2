@@ -2,7 +2,9 @@
 title: "intro to viz"
 author: "Xiaowen(Susan) Chen"
 date: "September 26, 2019"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 #Input
 ```{r}
@@ -81,72 +83,37 @@ pairs(D5)
 #pmax sets a maximum value, pmin sets a minimum value
 #round rounds numbers to whole number values
 #sample draws a random samples from the groups vector according to a uniform distribution
-set.seed(123)
-student_id<-seq(1,100, by=1)
-student_id
-require(rootSolve)
-require(msm)
-
-phi <- function(z) {
-    dnorm(z)
-}
-
-Phi <- function(z) {
-    pnorm(z)
-}
-
-Mean <- function(mu, sigma, a, b) {
-    alfa <-  (a - mu) / sigma
-    beta <-  (b - mu) / sigma
-
-    Z <-  Phi(beta) - Phi(alfa)
-
-    mu + sigma*(phi(alfa) - phi(beta))/Z
-}
-
-f <- function(mu, mean, sigma, a, b) {
-    mean - Mean(mu, sigma, a, b)
-}
-
-a <-  1
-b <-  100
-mean  <- 75
-sigma <- 20
-
-# find mu for desired mean
-q <- uniroot(f, c(a, b), mean, sigma, a, b)
-mu <- q$root
-
-print(sprintf("Found mu = %f for the desired mean %f and sigma %f", mu, mean, sigma))
-
 # sampling test
 set.seed(123)
-N = 100
-sample_scores<- rtnorm(N, mean=mu, sd=sigma, lower=a, upper=b)
+sample_scores<- rnorm(100,75,20)
 sample_scores
 
+score<-pmax(sample_scores,1)
+score<-pmin(score,100)
+score<-round(score,digits=0)
 
-maxi<-pmax(sample_scores,1)
-maxi
-mini<-pmin(sample_scores,100)
-mini
-round(sample_scores,digits=0)
-round(maxi,digits=0)
-round(mini,digits=0)
 
-uniform_distribution<-runif(sample_scores, min = 0, max = 1)
+uniform_distribution<-runif(score, min = 0, max = 1)
 uniform_distribution
 hist(uniform_distribution)
 
-interest<-c("sport", "music", "nature", "literature")
-#incorrect
-assign(paste(names(sample_scores), collapse=""), interest)
+interest<-sample(c("sport","music","nature","literature"),100,replace=TRUE)
+student<-list(score=score,interest=interest)
+student
+student_score<-rbind(score,interest)
+id<-colnames(student_score)<-c(1:100)
+id
 
+#data frame
+student_score_interest<-data.frame(score,interest)
+student_score_interest
 
+```
 2. Using base R commands, draw a histogram of the scores. Change the breaks in your histogram until you think they best represent your data.
 
 ```{r}
-hist(sample_scores,breaks = 100)
+hist(score,breaks = 100)
+hist(score,breaks = 10)
 ```
 
 
@@ -155,18 +122,15 @@ hist(sample_scores,breaks = 100)
 ```{r}
 #cut() divides the range of scores into intervals and codes the values in scores according to which interval they fall. We use a vector called `letters` as the labels, `letters` is a vector made up of the letters of the alphabet.
 #not correct...
-letters<-c("A","B","C","D","E","F","G","H","I","J")
-score_divides<-cut(sample_scores, 10, letters = NULL)
-score_divides
 
-v<-score_divides
-names(v)<-letters
-v
 
-assign(paste(names(v), collapse=""), v)
-letters
+score_range<-c(-1,0,59,70,80,90,100)
+letters<-c("NA","F","D",'C','B','A')
+grade<-table(cut(score,score_range,letters))
+grade_student<-cut(score,score_range,letters,order_result=TRUE)
+df1<-data.frame(score,grade_student)
+df1 
 
-```
 ```
 
 4. Now using the colorbrewer package (RColorBrewer; http://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3) design a pallette and assign it to the groups in your data on the histogram.
@@ -180,6 +144,9 @@ library(RColorBrewer)
 
 #Use named palette in histogram
 
+hist(score,c(-1,59,70,80,90,100),right=TRUE)
+graph<-hist(score,c(-1,59,70,80,90,100),right=TRUE)
+plot(graph,labels=c("F","D","C","B","A"),col=brewer.pal(5,"Reds"))
 ```
 
 
@@ -187,20 +154,23 @@ library(RColorBrewer)
 
 ```{r}
 #Make a vector of the colors from RColorBrewer
-
+plot_color<-brewer.pal(5,"Blues")
+boxplot(score~grade_student,data=df1,xlab="letter grade",ylab="score",main="score-interest",col=plot_color)
 ```
 
 
 6. Now simulate a new variable that describes the number of logins that students made to the educational game. They should vary from 1-25.
 
 ```{r}
-
+set.seed(234)
+logins<-sample(1:25,100,replace=TRUE)
+logins
 ```
 
 7. Plot the relationships between logins and scores. Give the plot a title and color the dots according to interest group.
 
 ```{r}
-
+plot(logins,score,main="logins-scores",col=c("black","red","blue","orange"))
 
 ```
 
@@ -208,14 +178,14 @@ library(RColorBrewer)
 8. R contains several inbuilt data sets, one of these in called AirPassengers. Plot a line graph of the the airline passengers over time using this data set.
 
 ```{r}
-
+plot(type="l",AirPassengers)
 ```
 
 
 9. Using another inbuilt data set, iris, plot the relationships between all of the variables in the data set. Which of these relationships is it appropraiet to run a correlation on? 
 
 ```{r}
-
+plot(iris,col=brewer.pal(5,"Greens"))
 ```
 
 10. Finally use the knitr function to generate an html document from your work. If you have time, try to change some of the output using different commands from the RMarkdown cheat sheet.
